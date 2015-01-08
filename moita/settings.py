@@ -16,6 +16,11 @@ NEWSPIDER_MODULE = 'moita.spiders'
 ITEM_PIPELINES = {
     'moita.pipelines.CagrPipeline': 314,
 
+    # file pipeline used to write scraped JSON data to a file
+    # if you do not change, filename is by default <campus><semester>.json, e.g. FLO20151.json
+    # this SHOULD be higher than CagrPipeline
+    'moita.pipelines.FilePipeline': 999,
+
     # mongodb pipeline used to write scraped data to collection
     # it can be replaced with a pipeline to save in a file or so
     # this SHOULD be higher than CagrPipeline
