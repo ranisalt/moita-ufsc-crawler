@@ -1,14 +1,14 @@
 Este repositório contém um novo *scraper* para extrair os dados do banco do CAGR para serem usados pelo CAPIM e
-derivados. Ele vem com um *pipeline* para MongoDB como um exemplo do que pode ser feito com um *framework* de *scraping*
-flexível como o Scrapy.
+derivados. Ele vem com um *pipeline* para MongoDB e um para arquivo JSON como um exemplo do que pode ser feito com um
+*framework* de *scraping* flexível como o Scrapy.
 
 O **moita-scrapy** primeiro faz login com as credenciais providenciadas em [moita/settings.py](moita/settings.py), e
 então procede para a tabela de dados para coletar os dados necessários para o *scraping*. O *crawler* é muito simples,
 com menos de 150 linhas e em grande parte só são necessárias porque o CAGR é excessivamente complexo e mal feito.
 
-Para usar o seu próprio pipeline (por exemplo, se você quer salvar os dados extraídos para um arquivo ao invés de um
-banco de dados, leia a documentação do Scrapy. Links para páginas relevantes da documentação estão incluídos no topo de
-cada arquivo.
+Para usar o seu próprio pipeline (por exemplo, se você quer salvar os dados extraídos para um formato específio ou banco
+de dados diferente), leia a documentação do Scrapy. Links para páginas relevantes da documentação estão incluídos no
+topo de cada arquivo.
 
 Para mudar o formato do resultado dos dados coletados, por favor leia a função ***parse*** dentro de ***CagrSpider*** em 
 [moita/spiders/cagr.py](moita/spiders/cagr.py). Atualmente, os dados são coletados como:
@@ -32,9 +32,10 @@ Campus:
     - professores(list), ex: ['Rafael Luiz Cancian', 'José Luis Güntzel']
 
 Embora pareça complexo, é muito fácil para atravessar e fazer operações de busca, assumindo que você divida em diversas
-classes. O JSON resultante tem em torno de 3MB e pode ser comprimido para cerca de 200KB com gzip. O arquivo pode ser
-ainda mais reduzido se você manter o formato original de tempo (ex: `2.0820-2 / AUX-ALOCAR`) ou removendo dados padrão
-(ex: quando as vagas são 0) mas isso reduz a expressividade dos dados e não ajuda tanto depois da compressão gzip.
+classes. O JSON resultante para EaD (maior arquivo) tem em torno de 1.7MB e pode ser comprimido para cerca de 219KB com
+gzip. O arquivo pode ser ainda mais reduzido se você manter o formato original de tempo (ex: `2.0820-2 / AUX-ALOCAR`) ou
+removendo dados padrão (ex: quando as vagas são 0) mas isso reduz a expressividade dos dados e não ajuda tanto depois da
+compressão gzip.
 
 Este *crawler* foi inspirado pelo original feito por [Ramiro Polla](@ramiropolla) que pode ser encontrado em 
 [ramiropolla/matrufsc_dbs](https://github.com/ramiropolla/matrufsc_dbs), tentando fazer os dados serem mais úteis e
