@@ -1,3 +1,5 @@
+moita-scrapy
+============
 This repository contains a new scraper to extract data from CAGR's database to be used with CAPIM and derivatives. It 
 comes with a MongoDB pipeline and a JSON file pipeline as an example of what can be done with a flexible scraping
 framework such as Scrapy.
@@ -45,5 +47,23 @@ code clean and readable, as long as web scraping and XPath could lead me.
 reason. That's why after some time I decided to give up on git versioning and just release when it was done. I should
 return to normal versioning now that I cancelled the service.
 
+Installing
+==========
+From your virtual environment, clone the repository, then execute:
+```
+python setup.py install
+```
+
+Running
+=======
+Change your credentials at [moita/settings.py](moita/settings.py) and run:
+```
+scrapy crawl cagr
+```
+
+And you are ready to go :)
+
+License
+=======
 This work is double licensed under the [MIT License](https://tldrlegal.com/license/mit-license) and
 [Beerware License](https://tldrlegal.com/license/beerware-license).
