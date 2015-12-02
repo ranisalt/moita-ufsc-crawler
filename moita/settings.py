@@ -14,8 +14,6 @@ NEWSPIDER_MODULE = 'moita.spiders'
 # USER_AGENT = 'ufsc (+http://www.yourdomain.com)'
 
 ITEM_PIPELINES = {
-    'moita.pipelines.CagrPipeline': 314,
-
     # file pipeline used to write scraped JSON data to a file
     # if you do not change, filename is by default <campus><semester>.json, e.g. FLO20151.json
     # this SHOULD be higher than CagrPipeline
