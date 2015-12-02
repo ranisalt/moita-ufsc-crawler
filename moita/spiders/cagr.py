@@ -31,6 +31,7 @@ class CagrSpider(InitSpider):
     # self explaining
     current_campus = None
     current_page = None
+    current_subject = None
 
     def init_request(self):
         self.log("Authenticating session")
@@ -52,22 +53,23 @@ class CagrSpider(InitSpider):
         hxs = Selector(response)
 
         xcampi = hxs.xpath('//select[@id="formBusca:selectCampus"]/option[@value]')
+        self.campus_name = [None] * len(xcampi)
         for xcampus in xcampi:
-            _id = xcampus.xpath('@value').extract()[0].strip()
+            _id = int(xcampus.xpath('@value').extract()[0].strip())
             campus = xcampus.xpath('text()').extract()[0].strip()[len('UFSC/'):]
-            self.data[int(_id)] = Campus(_id=_id, campus=campus, semester=SEMESTER, subjects={})
+            self.campus_name[_id] = campus
 
         self.index = response
 
         # scraping backwards seems faster AND the smaller campi are the last ones in the dropdown, so there is no need
         # to wait for the huge ones to scrap (or fail) to update the faster ones. it's just cosmetic.
-        self.current_campus = len(self.data) - 1
+        self.current_campus = len(xcampi) - 1
         self.current_page = 1
 
         return self.initialized()
 
     def make_requests_from_url(self, url=None):
-        self.log('Crawling %(campus)s on page %(page)d' % {'campus': self.data[self.current_campus]['campus'],
+        self.log('Crawling %(campus)s on page %(page)d' % {'campus': self.campus_name[self.current_campus],
                                                            'page': self.current_page},
                  level=log.INFO)
 
@@ -88,13 +90,21 @@ class CagrSpider(InitSpider):
 
             # these steps are performed to insert a new subject if the current row represents a subject that was not yet
             # scraped, and add it before continuing on scraping classes
+
             subject_id = xcells[3].xpath('./text()').extract()[0]
-            if subject_id not in self.data[self.current_campus]['subjects']:
+            if subject_id != self.current_subject:
+                if self.data:
+                    yield self.data
+
+                self.current_subject = subject_id
+
                 name = xcells[5].xpath('./text()').extract()[0].strip()
                 hours = int(xcells[6].xpath('./text()').extract()[0].strip())
 
-                self.data[self.current_campus]['subjects'][subject_id] = {
+                self.data = {
                     '_id': subject_id,
+                    'campus': self.campus_name[self.current_campus],
+                    'semester': SEMESTER,
                     'name': name,
                     'hours': hours,
                     'classes': [],
@@ -113,14 +123,14 @@ class CagrSpider(InitSpider):
                 # length of a class for simplicity at the front end. you may change to suit your needs or just use the
                 # length of the "time" value
                 timetable.append({
-                    'day': stripped['day'],
+                    'day': int(stripped['day']),
                     'room': stripped['room'],
                     'time': TIMES[TIMES.index(stripped['time']):][:int(stripped['qty'])],
                 })
 
             teachers = [teacher.strip() for teacher in xcells[13].xpath('.//a/text()').extract()]
 
-            self.data[self.current_campus]['subjects'][subject_id]['classes'].append({
+            self.data['classes'].append({
                 '_id': class_id,
                 'vacancy': vacancy,
                 'occupied': occupied,
@@ -136,7 +146,7 @@ class CagrSpider(InitSpider):
         if len(xbuttons) > 0:
             self.current_page += 1
         else:
-            yield self.data[self.current_campus]
+            yield self.data
             # remember to increase instead of decrease if you start at the zeroth campus
             self.current_campus -= 1
             self.current_page = 1
