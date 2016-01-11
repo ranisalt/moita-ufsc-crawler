@@ -1,2 +1,2 @@
-scrapy
-scrapy-mongodb
+scrapy>=1.0.4
+scrapy-mongodb>=0.9.1

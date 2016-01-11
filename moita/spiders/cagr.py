@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 from scrapy import log
-from scrapy.contrib.spiders.init import InitSpider
+from scrapy.spiders.init import InitSpider
 from scrapy.http import FormRequest, Request
 from scrapy.selector import Selector
 
@@ -55,8 +55,8 @@ class CagrSpider(InitSpider):
         xcampi = hxs.xpath('//select[@id="formBusca:selectCampus"]/option[@value]')
         self.campus_name = [None] * len(xcampi)
         for xcampus in xcampi:
-            _id = int(xcampus.xpath('@value').extract()[0].strip())
-            campus = xcampus.xpath('text()').extract()[0].strip()[len('UFSC/'):]
+            _id = int(xcampus.xpath('@value').extract_first().strip())
+            campus = xcampus.xpath('text()').extract_first().strip()[len('UFSC/'):]
             self.campus_name[_id] = campus
 
         self.index = response
@@ -91,15 +91,15 @@ class CagrSpider(InitSpider):
             # these steps are performed to insert a new subject if the current row represents a subject that was not yet
             # scraped, and add it before continuing on scraping classes
 
-            subject_id = xcells[3].xpath('./text()').extract()[0]
+            subject_id = xcells[3].xpath('./text()').extract_first()
             if subject_id != self.current_subject:
                 if self.data:
                     yield self.data
 
                 self.current_subject = subject_id
 
-                name = xcells[5].xpath('./text()').extract()[0].strip()
-                hours = int(xcells[6].xpath('./text()').extract()[0].strip())
+                name = xcells[5].xpath('./text()').extract_first().strip()
+                hours = int(xcells[6].xpath('./text()').extract_first().strip())
 
                 self.data = {
                     '_id': subject_id,
@@ -110,10 +110,10 @@ class CagrSpider(InitSpider):
                     'classes': [],
                 }
 
-            class_id = xcells[4].xpath('./text()').extract()[0].strip()
-            vacancy = int(xcells[7].xpath('./text()').extract()[0].strip())
-            occupied = int(xcells[8].xpath('./text()').extract()[0].strip())
-            special = int(xcells[9].xpath('./text()').extract()[0].strip())
+            class_id = xcells[4].xpath('./text()').extract_first().strip()
+            vacancy = int(xcells[7].xpath('./text()').extract_first().strip())
+            occupied = int(xcells[8].xpath('./text()').extract_first().strip())
+            special = int(xcells[9].xpath('./text()').extract_first().strip())
 
             timetable = []
             for time in xcells[12].xpath('./text()').extract():
