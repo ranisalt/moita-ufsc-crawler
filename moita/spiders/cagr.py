@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
+import logging
 import re
-from scrapy import log
 from scrapy.spiders.init import InitSpider
 from scrapy.http import FormRequest, Request
 from scrapy.selector import Selector
@@ -34,7 +34,7 @@ class CagrSpider(InitSpider):
     current_subject = None
 
     def init_request(self):
-        self.log("Authenticating session")
+        logging.info("Authenticating session")
         return Request(url=self.login_url, callback=self.login)
 
     def login(self, response):
@@ -43,10 +43,10 @@ class CagrSpider(InitSpider):
     def auth_check(self, response):
         # login URL redirects us to a page where we can detect if auth was successful
         if "Sucesso ao se logar" in response.body:
-            self.log("Authentication successful")
+            logging.info("Authentication successful")
             return Request(url=self.start_urls[0], callback=self.gather, dont_filter=True)
         else:
-            self.log("Authentication failed", level=log.ERROR)
+            logging.error("Authentication failed")
 
     def gather(self, response):
         # this method gathers data about all campi that will be scraped
@@ -69,9 +69,10 @@ class CagrSpider(InitSpider):
         return self.initialized()
 
     def make_requests_from_url(self, url=None):
-        self.log('Crawling %(campus)s on page %(page)d' % {'campus': self.campus_name[self.current_campus],
-                                                           'page': self.current_page},
-                 level=log.INFO)
+        logging.info('Crawling %(campus)s on page %(page)d' % {
+            'campus': self.campus_name[self.current_campus],
+            'page': self.current_page,
+        })
 
         # welp remember that I said I need to save the first page form? :)
         return FormRequest.from_response(self.index, formdata={
