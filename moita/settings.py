@@ -52,4 +52,4 @@ CAMPI = {
 }
 
 # MUST match CAGR valid semester
-SEMESTER = '20151'
+SEMESTER = '20161'
