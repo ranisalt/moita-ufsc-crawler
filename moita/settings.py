@@ -22,21 +22,10 @@ ITEM_PIPELINES = {
     # mongodb pipeline used to write scraped data to collection
     # it can be replaced with a pipeline to save in a file or so
     # this SHOULD be higher than CagrPipeline
-    'scrapy_mongodb.MongoDBPipeline': 999,
+    #'scrapy_mongodb.MongoDBPipeline': 999,
 }
 
 LOG_LEVEL = 'INFO'
-
-# replace with your data if mongodb is wanted
-MONGODB_DATABASE = EDIT HERE
-MONGODB_COLLECTION = EDIT HERE
-MONGODB_ADD_TIMESTAMP = True
-
-# use your own authentication
-AUTH_OPTIONS = {
-    'username': EDIT HERE,
-    'password': EDIT HERE,
-}
 
 # MUST match CAGR times
 TIMES = ['0730', '0820', '0910', '1010', '1100', '1330', '1420', '1510', '1620', '1710', '1830', '1920', '2020', '2110']
