@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import logging
+import os
 import re
 from scrapy.spiders.init import InitSpider
 from scrapy.http import FormRequest, Request
 from scrapy.selector import Selector
 
 from moita.items import Campus
-from moita.settings import AUTH_OPTIONS, SEMESTER, TIMES
+from moita.settings import SEMESTER, TIMES
 
 
 class CagrSpider(InitSpider):
@@ -38,7 +39,10 @@ class CagrSpider(InitSpider):
         return Request(url=self.login_url, callback=self.login)
 
     def login(self, response):
-        return FormRequest.from_response(response, formdata=AUTH_OPTIONS, callback=self.auth_check)
+        return FormRequest.from_response(response, formdata={
+                'username': os.environ['CAGR_USERNAME'],
+                'password': os.environ['CAGR_PASSWORD'],
+            }, callback=self.auth_check)
 
     def auth_check(self, response):
         # login URL redirects us to a page where we can detect if auth was successful
