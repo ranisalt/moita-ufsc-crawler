@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 
+# Define here the models for your scraped items
+#
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/items.html
 
 import scrapy
 
 
-class Campus(scrapy.Item):
-    _id = scrapy.Field()
+class Subject(scrapy.Item):
+    id_ = scrapy.Field()
     campus = scrapy.Field()
     semester = scrapy.Field()
-    subjects = scrapy.Field()
+    name = scrapy.Field()
+    hours = scrapy.Field(serializer=int)
+    classes = scrapy.Field()

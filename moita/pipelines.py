@@ -1,21 +1,14 @@
 # -*- coding: utf-8 -*-
-import json
-from scrapy.exporters import BaseItemExporter
 
-from moita.settings import CAMPI, SEMESTER
+# Define your item pipelines here
+#
+# Don't forget to add your pipeline to the ITEM_PIPELINES setting
+# See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
+
+from .items import Subject
 
 
-class FilePipeline(BaseItemExporter):
-    subjects = {campus: [] for campus in CAMPI}
-
+class SubjectPipeline(object):
     def process_item(self, item, spider):
-        _item = dict(self._get_serialized_fields(item))
-        self.subjects[_item['campus']].append(_item)
-
-        return item
-
-    def close_spider(self, spider):
-        for campus in self.subjects:
-            print(campus)
-            with open(''.join([campus, str(SEMESTER), '.json']), 'w') as fp:
-                json.dump(self.subjects[campus], fp)
+        assert isinstance(item, dict)
+        return Subject(**item)
