@@ -70,10 +70,11 @@ class CagrSpider(scrapy.Spider):
                 return {}
 
             t = t.groupdict()
+            timeIndex = TIMES.index(t['time'])
             return {
                 'day': int(t['day']),
                 'room': t['room'],
-                'time': TIMES[TIMES.index(t['time']):int(t['qty'])],
+                'time': TIMES[timeIndex:timeIndex + int(t['qty'])],
             }
 
         html = scrapy.Selector(text=res.body, type='html')
