@@ -84,11 +84,11 @@ class CagrSpider(scrapy.Spider):
 
             id_ = cells[3].css('::text').extract_first()
             # reached end of subject data
-            if id_ != self.subject.get('id_'):
+            if id_ != self.subject.get('id'):
                 if self.subject:
                     yield Subject(**self.subject)
                 self.subject = {
-                    'id_': id_,
+                    'id': id_,
                     'campus': self.campus[1],
                     'semester': SEMESTER,
                     'name': cells[5].css('::text').extract_first(),
@@ -97,7 +97,7 @@ class CagrSpider(scrapy.Spider):
                 }
 
             self.subject['classes'].append({
-                'id_': cells[4].css('::text').extract_first(),
+                'id': cells[4].css('::text').extract_first(),
                 'vacancy': cells[7].css('::text').extract_first(),
                 'occupied': cells[8].css('::text').extract_first(),
                 'special': cells[9].css('::text').extract_first(),

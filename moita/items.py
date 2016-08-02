@@ -9,7 +9,7 @@ import scrapy
 
 
 class Subject(scrapy.Item):
-    id_ = scrapy.Field()
+    id = scrapy.Field()
     campus = scrapy.Field()
     semester = scrapy.Field()
     name = scrapy.Field()
