@@ -27,13 +27,17 @@ class CagrSpider(scrapy.Spider):
 
     def start_requests(self):
         def populate(res):
-            for campus in res.css('[id="formBusca:selectCampus"] option'):
-                id_ = campus.css('::attr(value)').extract_first().strip()
-                name = campus.css('::text').extract_first().strip()[5:]
-                self.campi_names[id_] = name
+            if 'collecta.sistemas.ufsc.br' in res.url:
+                yield FormRequest.from_response(res, 'j_id20',
+                                                 callback=populate)
+            else:
+                for campus in res.css('[id="formBusca:selectCampus"] option'):
+                    id_ = campus.css('::attr(value)').extract_first().strip()
+                    name = campus.css('::text').extract_first().strip()[5:]
+                    self.campi_names[id_] = name
 
-            self.campus, self.index = self.campi_names.popitem(), res
-            yield self.make_requests_from_index(page=1)
+                self.campus, self.index = self.campi_names.popitem(), res
+                yield self.make_requests_from_index(page=1)
 
         def post_login(res):
             # login URL redirects to a page where we can detect if successful
