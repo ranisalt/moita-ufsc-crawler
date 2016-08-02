@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import collections
-import functools
 import os
 import re
 
 import scrapy
 from scrapy.http import FormRequest, Request, Response
+
+from ..items import Subject
 
 SEMESTER = '20161'
 TIMES = ['0730', '0820', '0910', '1010', '1100', '1330', '1420', '1510', '1620',
@@ -86,7 +87,7 @@ class CagrSpider(scrapy.Spider):
             # reached end of subject data
             if id_ != self.subject.get('id_'):
                 if self.subject:
-                    yield self.subject
+                    yield Subject(**self.subject)
                 self.subject = {
                     'id_': id_,
                     'campus': self.campus[1],
