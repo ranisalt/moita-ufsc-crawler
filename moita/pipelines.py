@@ -3,6 +3,7 @@
 import json
 from collections import defaultdict, namedtuple
 from datetime import datetime
+from unicodedata import normalize
 from .items import Subject
 from .spiders.cagr import SEMESTER
 
@@ -28,8 +29,12 @@ class LegacyPipeline(object):
             ])
             del klass['raw_timetable']
 
+        try:
+            norm = normalize('NFKD', item['name']).encode('ascii', 'ignore')
+        except TypeError:
+            norm = item['name']
         raw_subject = [
-            item['id'], item['name'].upper(), item['name'], raw_classes
+            item['id'], norm.upper(), item['name'], raw_classes
         ]
 
         self.data[item['campus']].append(raw_subject)
@@ -46,4 +51,4 @@ class LegacyPipeline(object):
 
         semester = 1 if start_time.month < 7 else 2
         with open('{}.json'.format(SEMESTER), 'w') as fp:
-            json.dump(data, fp)
+            json.dump(data, fp, ensure_ascii=False, separators=(',', ':',))

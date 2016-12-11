@@ -8,7 +8,7 @@ from scrapy.http import FormRequest, Request, Response
 
 from ..items import Subject
 
-SEMESTER = '20161'
+SEMESTER = '20171'
 TIMES = ['0730', '0820', '0910', '1010', '1100', '1330', '1420', '1510', '1620',
          '1710', '1830', '1920', '2020', '2110']
 
