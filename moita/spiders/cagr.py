@@ -96,11 +96,17 @@ class CagrSpider(scrapy.Spider):
                     'classes': [],
                 }
 
+            remaining = cells[10].css('::text').extract_first()
+            lacking = cells[11].css('::text').extract_first()
+
             self.subject['classes'].append({
                 'id': cells[4].css('::text').extract_first(),
-                'vacancy': cells[7].css('::text').extract_first(),
-                'occupied': cells[8].css('::text').extract_first(),
-                'special': cells[9].css('::text').extract_first(),
+                'vacancy': int(cells[7].css('::text').extract_first()),
+                'occupied': int(cells[8].css('::text').extract_first()),
+                'special': int(cells[9].css('::text').extract_first()),
+                'remaining': 0 if remaining == 'LOTADA' else int(remaining),
+                'lacking': 0 if lacking is None else int(lacking),
+                'raw_timetable': cells[12].css('::text').extract(),
                 'timetable': [parse_timetable(time) for time in
                               cells[12].css('::text').extract()],
                 'teachers': cells[13].css('::text').extract(),
