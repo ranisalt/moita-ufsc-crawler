@@ -25,9 +25,6 @@ class LegacyPipeline(object):
     data = defaultdict(list)
     time_format = '{}.{}-{} / {}'
 
-    def open_spider(self, spider):
-        self.data['DATA'] = datetime.now().strftime('%d/%m/%y - %H:%M')
-
     def process_item(self, item: Subject, spider):
         norm = unidecode(item['name']).upper()
         subject = [item['id'], norm, item['name'], list(classes(item))]
@@ -35,5 +32,6 @@ class LegacyPipeline(object):
         return item
 
     def close_spider(self, spider):
+        self.data['DATA'] = datetime.now().strftime('%d/%m/%y - %H:%M')
         with open('{}.json'.format(SEMESTER), 'w') as fp:
             json.dump(self.data, fp, ensure_ascii=False, separators=(',', ':',))
