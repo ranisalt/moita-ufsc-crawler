@@ -96,7 +96,7 @@ class CagrSpider(scrapy.Spider):
                     'campus': self.campus[1],
                     'semester': SEMESTER,
                     'name': cells[5].css('::text').extract_first(),
-                    'hours': cells[6].css('::text').extract_first(),
+                    'hours': int(cells[6].css('::text').extract_first()),
                     'classes': [],
                 }
 
