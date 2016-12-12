@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import json
-from collections import defaultdict, namedtuple
+from collections import defaultdict
 from datetime import datetime
-from unicodedata import normalize
+from unidecode import unidecode
 from .items import Subject
 from .spiders.cagr import SEMESTER
 
@@ -13,42 +13,27 @@ from .spiders.cagr import SEMESTER
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 
+def classes(item: Subject):
+    for klass in item['classes']:
+        yield [klass['id'], item['hours'], klass['vacancy'], klass['occupied'],
+               klass['special'], klass['remaining'], klass['lacking'],
+               klass['raw_timetable'], klass['teachers']]
+        del klass['raw_timetable']
+
+
 class LegacyPipeline(object):
+    data = defaultdict(list)
     time_format = '{}.{}-{} / {}'
 
     def open_spider(self, spider):
-        self.data = defaultdict(list)
+        self.data['DATA'] = datetime.now().strftime('%d/%m/%y - %H:%M')
 
     def process_item(self, item: Subject, spider):
-        raw_classes = []
-        for klass in item['classes']:
-            raw_classes.append([
-                klass['id'], item['hours'], klass['vacancy'], klass['occupied'],
-                klass['special'], klass['remaining'], klass['lacking'],
-                klass['raw_timetable'], klass['teachers']
-            ])
-            del klass['raw_timetable']
-
-        try:
-            norm = normalize('NFKD', item['name']).encode('ascii', 'ignore')
-        except TypeError:
-            norm = item['name']
-        raw_subject = [
-            item['id'], norm.upper(), item['name'], raw_classes
-        ]
-
-        self.data[item['campus']].append(raw_subject)
+        norm = unidecode(item['name']).upper()
+        subject = [item['id'], norm, item['name'], list(classes(item))]
+        self.data[item['campus']].append(subject)
         return item
 
     def close_spider(self, spider):
-        start_time = datetime.now()
-
-        data = {
-            'DATA': start_time.strftime('%d/%m/%y - %H:%M'),
-        }
-
-        data.update(self.data)
-
-        semester = 1 if start_time.month < 7 else 2
         with open('{}.json'.format(SEMESTER), 'w') as fp:
-            json.dump(data, fp, ensure_ascii=False, separators=(',', ':',))
+            json.dump(self.data, fp, ensure_ascii=False, separators=(',', ':',))

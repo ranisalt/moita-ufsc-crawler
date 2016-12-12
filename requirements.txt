@@ -1,1 +1,2 @@
 scrapy>=1.1.0
+unidecode>=0.4.19
