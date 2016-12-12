@@ -8,6 +8,7 @@ from scrapy.http import FormRequest, Request, Response
 
 from ..items import Subject
 
+CAMPI_EXCLUDE = ['EaD']
 SEMESTER = '20171'
 TIMES = ['0730', '0820', '0910', '1010', '1100', '1330', '1420', '1510', '1620',
          '1710', '1830', '1920', '2020', '2110']
@@ -35,6 +36,9 @@ class CagrSpider(scrapy.Spider):
             for campus in res.css('[id="formBusca:selectCampus"] option'):
                 id_ = campus.css('::attr(value)').extract_first().strip()
                 name = campus.css('::text').extract_first().strip()[5:]
+                if name in CAMPI_EXCLUDE:
+                    continue
+
                 self.campi_names[id_] = name
 
             self.campus, self.index = self.campi_names.popitem(), res

@@ -12,6 +12,6 @@ class Subject(scrapy.Item):
     id = scrapy.Field()
     campus = scrapy.Field()
     semester = scrapy.Field()
-    name = scrapy.Field()
+    name = scrapy.Field(serializer=str)
     hours = scrapy.Field(serializer=int)
     classes = scrapy.Field()
